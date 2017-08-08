@@ -23,6 +23,7 @@
 
 //#define RAW_DEBUG
 
+/******************** IP Address Table - Learned from network ********************/
 /* Each entry in the table */
 typedef struct ipEntry {
     char *addr;
@@ -105,6 +106,7 @@ void addEntry(char *addr) {
     return;
 }
 
+/******************** RAW Socket method ********************/
 /* Listens for packets on network and learn IP */
 void rawSocket(int proto) {
     int sockfd;
@@ -149,6 +151,8 @@ void rawSocket(int proto) {
     
     return;
 }
+
+/******************** PF_SOCKET method ********************/
 
 /* Parse ethernet frame and add entry to IP table */
 void processEthernetFrame(char *buf) {
@@ -214,6 +218,8 @@ void pfSocket(int proto) {
 
 	return;
 }
+
+/******************** PF_SOCKET with MMAP method ********************/
 
 #include <sys/ioctl.h>
 #include <linux/if_packet.h> // sockaddr_ll
@@ -345,6 +351,7 @@ void pfSocketMmap(int proto) {
 	return;	
 }
 
+/******************** Utility to select method ********************/
 void learnIpAddr(int type) {
 	if (type == PFSOCKET) {
 		pfSocket(htons(ETH_P_ALL));
@@ -358,6 +365,7 @@ void learnIpAddr(int type) {
 	return;
 }
 
+/* Dump the table */
 void cHandler(int signum) {
 	printf("Keyboard interrupt\n");
 	dumpIpTable();
